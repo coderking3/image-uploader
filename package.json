@@ -1,0 +1,41 @@
+{
+  "name": "image-uploader",
+  "type": "module",
+  "imports": {
+    "#/*": "./server/*"
+  },
+  "bin": "bin/k3img.mjs",
+  "scripts": {
+    "dev": "nitro dev",
+    "build": "nitro build",
+    "upload": "tsx scripts/upload.ts --cache local",
+    "format": "prettier --write .",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fastify/busboy": "^3.2.0",
+    "consola": "^3.4.2"
+  },
+  "devDependencies": {
+    "@inquirer/prompts": "^8.5.2",
+    "@king-3/eslint-config": "^6.1.0",
+    "@king-3/prettier-config": "^3.4.0",
+    "@types/cli-progress": "^3.11.6",
+    "@types/node": "latest",
+    "@types/qrcode-terminal": "^0.12.2",
+    "citty": "^0.2.2",
+    "cli-progress": "^3.12.0",
+    "eslint": "^10.6.0",
+    "fast-glob": "^3.3.3",
+    "image-size": "^2.0.2",
+    "nitro": "latest",
+    "p-limit": "^7.3.0",
+    "prettier": "^3.9.4",
+    "qrcode-terminal": "^0.12.0",
+    "tsx": "^4.23.0",
+    "typescript": "^6.0.3",
+    "uuidjs": "^5.1.0"
+  }
+}

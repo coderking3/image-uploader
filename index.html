@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>k3img · 图床上传服务</title>
+    <meta
+      name="description"
+      content="基于 Nitro 的图床上传服务：扫码登录，上传图片，拿到可访问的 URL。"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="prompt">
+        <span class="prompt__user">guest@k3img</span
+        ><span class="prompt__sep">:</span><span class="prompt__path">~</span
+        ><span class="prompt__dollar">$</span>
+        <span class="prompt__cmd"
+          >curl -s /api/myinfo<span class="cursor"></span
+        ></span>
+      </header>
+
+      <main>
+        <section class="man">
+          <p class="man__label">Name</p>
+          <p class="man__body">
+            <strong class="man__title">k3img</strong>借助 bilibili API
+            的图片上传服务，基于
+            <a
+              href="https://v3.nitro.build/docs"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Nitro</a
+            >
+            构建。
+          </p>
+        </section>
+
+        <section class="man">
+          <p class="man__label">Synopsis</p>
+          <p class="man__body">
+            扫码登录，拿到凭证；上传图片，拿到可以直接访问的图片 URL。
+            服务端不落库、不做二次处理，凭证以 <code>httpOnly</code> Cookie
+            形式下发，前端和 CLI 脚本均可复用同一套接口。
+          </p>
+        </section>
+
+        <section class="man">
+          <p class="man__label">Endpoints</p>
+          <ul class="endpoints">
+            <li>
+              <span class="method method--get">GET</span>
+              <span class="path">/api/qrcode/generate</span>
+              <span class="desc">生成登录二维码</span>
+            </li>
+            <li>
+              <span class="method method--get">GET</span>
+              <span class="path">/api/qrcode/poll?qrcode_key=</span>
+              <span class="desc">轮询扫码状态，登录成功后写入凭证 Cookie</span>
+            </li>
+            <li>
+              <span class="method method--get">GET</span>
+              <span class="path">/api/myinfo</span>
+              <span class="desc">获取当前登录账号信息</span>
+            </li>
+            <li>
+              <span class="method method--post">POST</span>
+              <span class="path">/api/upload</span>
+              <span class="desc"
+                >上传图片，multipart/form-data，字段名 <code>file</code></span
+              >
+            </li>
+          </ul>
+        </section>
+
+        <section class="man">
+          <p class="man__label">Authentication</p>
+          <p class="man__body">
+            调用 <code>/api/qrcode/poll</code> 扫码成功后，
+            <code>SESSDATA</code> 与 <code>bili_jct</code> 会自动写入
+            <code>httpOnly</code> Cookie，同源请求下无需手动携带；跨域调用请
+            自行在请求头中附带 <code>Cookie</code>。
+          </p>
+        </section>
+
+        <section class="man">
+          <p class="man__label">Example</p>
+          <div class="code-wrap">
+            <pre class="code" id="example-code">
+curl -X POST /api/upload \
+  -H "Cookie: SESSDATA=...; bili_jct=..." \
+  -F "file=@avatar.png"</pre>
+            <button class="copy-btn" id="copy-btn" type="button">copy</button>
+          </div>
+        </section>
+      </main>
+
+      <footer class="man">
+        <p class="man__label">See also</p>
+        <p class="man__body">
+          <a
+            href="https://v3.nitro.build/docs"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Nitro Documentation</a
+          ><span class="sep">·</span
+          ><a
+            href="https://github.com/king-3"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Source</a
+          >
+        </p>
+      </footer>
+    </div>
+
+    <script>
+      const copyBtn = document.getElementById('copy-btn')
+      const exampleCode = document.getElementById('example-code')
+
+      copyBtn?.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(exampleCode.textContent ?? '')
+          const original = copyBtn.textContent
+          copyBtn.textContent = 'copied'
+          setTimeout(() => {
+            copyBtn.textContent = original
+          }, 1500)
+        } catch {
+          // clipboard API 不可用（比如非 https 环境），静默失败即可
+        }
+      })
+    </script>
+  </body>
+</html>
