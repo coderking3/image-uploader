@@ -1,6 +1,6 @@
 # Image Uploader
 
-[English](./README.md) · [简体中文](./README.zh-CN.md)
+[English](./README.md) · [简体中文](./README_zh.md)
 
 A lightweight image upload service built on [Nitro](https://nitro.build), backed by a third-party image hosting API. Log in once via QR code, then upload images through the REST API, the project-local CLI, or a global CLI command available anywhere on your machine.
 
