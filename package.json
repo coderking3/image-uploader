@@ -6,7 +6,7 @@
   },
   "bin": "bin/k3img.mjs",
   "scripts": {
-    "dev": "nitro dev",
+    "dev": "nitro dev --port 3080",
     "build": "nitro build",
     "upload": "tsx scripts/upload.ts --cache local",
     "format": "prettier --write .",
