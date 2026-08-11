@@ -2,17 +2,17 @@
 
 [English](./README.md) · [简体中文](./README_zh.md)
 
-A lightweight image upload service built on [Nitro](https://nitro.build), backed by a third-party image hosting API. Log in once via QR code, then upload images through the REST API, the project-local CLI, or a global CLI command available anywhere on your machine.
+A lightweight image upload service built on [Nitro](https://nitro.build), backed by a third-party image hosting API. After logging in, you can upload images through the REST API, the project-local CLI, or a global CLI command available anywhere on your machine.
 
 ## Features
 
-- **QR code login** — scan with the Bilibili app, no manual cookie copying
+- **Two login methods** — scan with the Bilibili app or submit login credentials manually
 - **REST API** — `POST /api/upload` for programmatic uploads, cookie-based auth
 - **CLI upload** — batch upload a file or a whole directory, with concurrency control and a progress bar
 
 ## Requirements
 
-- Node.js 18 or later
+- Node.js 20.12 or later
 - [pnpm](https://pnpm.io) (any recent version)
 
 ## Getting Started
@@ -30,10 +30,12 @@ The dev server starts on Nitro's default port. Open the root URL in your browser
 
 | Method | Path                           | Description                                                |
 | ------ | ------------------------------ | ---------------------------------------------------------- |
+| `POST` | `/api/auth/certificate`        | Validate login credentials and set the auth cookies        |
 | `GET`  | `/api/qrcode/generate`         | Generate a login QR code                                   |
 | `GET`  | `/api/qrcode/poll?qrcode_key=` | Poll scan status; sets the auth cookie on success          |
 | `GET`  | `/api/myinfo`                  | Get the currently logged-in account's info                 |
 | `POST` | `/api/upload`                  | Upload an image (`multipart/form-data`, field name `file`) |
+| `POST` | `/api/auth/logout`             | Log out and clear the authentication cookies               |
 
 ## CLI
 

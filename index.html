@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>k3img · 图床上传服务</title>
+    <title>king3 image · 图床上传服务</title>
     <meta
       name="description"
-      content="基于 Nitro 的图床上传服务：扫码登录，上传图片，拿到可访问的 URL。"
+      content="king3 image 是基于 Nitro 的图床上传服务：登录后上传图片，获取可访问的 URL。"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,7 +19,7 @@
   <body>
     <div class="page">
       <header class="prompt">
-        <span class="prompt__user">guest@k3img</span
+        <span class="prompt__user">guest@king3/image</span
         ><span class="prompt__sep">:</span><span class="prompt__path">~</span
         ><span class="prompt__dollar">$</span>
         <span class="prompt__cmd"
@@ -31,7 +31,7 @@
         <section class="man">
           <p class="man__label">Name</p>
           <p class="man__body">
-            <strong class="man__title">k3img</strong>借助 bilibili API
+            <strong class="man__title">king3 image</strong>借助第三方 API
             的图片上传服务，基于
             <a
               href="https://v3.nitro.build/docs"
@@ -46,15 +46,20 @@
         <section class="man">
           <p class="man__label">Synopsis</p>
           <p class="man__body">
-            扫码登录，拿到凭证；上传图片，拿到可以直接访问的图片 URL。
-            服务端不落库、不做二次处理，凭证以 <code>httpOnly</code> Cookie
-            形式下发，前端和 CLI 脚本均可复用同一套接口。
+            扫码登录或手动提交凭证，登录后上传图片，获取可以直接访问的图片
+            URL。服务端不落库、不做二次处理，登录凭证通过
+            <code>HttpOnly</code> Cookie 保存。
           </p>
         </section>
 
         <section class="man">
           <p class="man__label">Endpoints</p>
           <ul class="endpoints">
+            <li>
+              <span class="method method--post">POST</span>
+              <span class="path">/api/auth/certificate</span>
+              <span class="desc">验证 SESSDATA 与 bili_jct 并登录</span>
+            </li>
             <li>
               <span class="method method--get">GET</span>
               <span class="path">/api/qrcode/generate</span>
@@ -77,16 +82,21 @@
                 >上传图片，multipart/form-data，字段名 <code>file</code></span
               >
             </li>
+            <li>
+              <span class="method method--post">POST</span>
+              <span class="path">/api/auth/logout</span>
+              <span class="desc">退出登录并清除凭证 Cookie</span>
+            </li>
           </ul>
         </section>
 
         <section class="man">
           <p class="man__label">Authentication</p>
           <p class="man__body">
-            调用 <code>/api/qrcode/poll</code> 扫码成功后，
-            <code>SESSDATA</code> 与 <code>bili_jct</code> 会自动写入
-            <code>httpOnly</code> Cookie，同源请求下无需手动携带；跨域调用请
-            自行在请求头中附带 <code>Cookie</code>。
+            扫码登录或手动登录成功后，<code>SESSDATA</code> 与
+            <code>bili_jct</code> 会自动写入 <code>HttpOnly</code> Cookie。
+            浏览器同源请求无需额外处理；跨域请求需要启用 credentials，curl
+            等非浏览器客户端可以手动携带 <code>Cookie</code>。
           </p>
         </section>
 

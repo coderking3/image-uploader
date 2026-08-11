@@ -14,7 +14,7 @@
 
 ```bash
 git clone <this-repo-url>
-cd k3img-uploader
+cd image-uploader
 pnpm install
 chmod +x bin/k3img.mjs
 pnpm link --global
