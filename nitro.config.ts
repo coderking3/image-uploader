@@ -14,5 +14,9 @@ export default defineConfig({
       }
     }
   },
+  runtimeConfig: {
+    upstashRedisRestUrl: '',
+    upstashRedisRestToken: ''
+  },
   plugins: ['./server/plugins/logger.ts']
 })

@@ -1,6 +1,7 @@
 import { defineHandler } from 'nitro'
 import { getCookie } from 'nitro/h3'
 
+import { incrementHostedImageCount } from '#/utils/hosted'
 import { fail, ok } from '#/utils/http'
 import { parseMultipart } from '#/utils/multipart'
 import { uploadImage } from '#/utils/upload'
@@ -30,6 +31,8 @@ export default defineHandler(async (event) => {
       { data: file, filename: file.name },
       { SESSDATA: sessdata, bili_jct: biliJct }
     )
+
+    await incrementHostedImageCount()
 
     return ok({ data })
   } catch (err) {

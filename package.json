@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@fastify/busboy": "^3.2.0",
+    "@upstash/redis": "^1.38.4",
     "consola": "^3.4.2"
   },
   "devDependencies": {
