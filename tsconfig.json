@@ -11,6 +11,7 @@
 
     "paths": {
       "#/*": ["./server/*"],
+      "#server/*": ["./server/*"],
       "~/*": ["./*"]
     },
     "resolveJsonModule": true,

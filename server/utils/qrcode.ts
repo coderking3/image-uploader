@@ -1,7 +1,7 @@
-import type { RequestResult } from '#/utils/http'
+import type { RequestResult } from './http/index.ts'
 
-import { API } from '#/constants'
-import { pickCookie, request, requestRaw } from '#/utils/http'
+import { API } from '../constants.ts'
+import { pickCookie, request, requestRaw } from './http/index.ts'
 
 export interface QrcodeGenerateData {
   url: string

@@ -1,89 +1,89 @@
-# 全局 CLI 配置指南
+# k3img 全局 CLI 使用指南
 
-[English](./cli.md) · [简体中文](./cli_zh.md)
+把本仓库注册为全局命令后，可以在任意目录运行 `k3img` 上传图片。只在仓库内使用时，无须全局注册，直接运行 `pnpm upload -f avatar.png`。
 
-这份文档介绍如何把 `k3img` 装成全局命令，让你在电脑任意目录下都能运行它，而不只是在这个项目仓库里。
+## 准备
 
-## 原理
+- 安装 Node.js 20.12 或更新版本，以及 [pnpm](https://pnpm.io/installation)。Node.js 自带的 npm 用于注册全局命令。
+- 下载或克隆本仓库，并记住 `image-uploader` 文件夹的位置。下文的路径只是示例，请换成你的实际路径。
 
-`bin/k3img.mjs` 是一个转发脚本：它会去找这个仓库自己 `node_modules` 里的 `tsx`，用它执行 `scripts/upload.ts`，并把你传入的所有参数原样转发过去。`pnpm link --global` 做的事，是在 pnpm 的全局 bin 目录下建一个指回这个文件的软链接——仓库本身不会被复制到别处。
+本指南使用 [`npm link`](https://docs.npmjs.com/cli/v11/commands/npm-link/) 创建全局命令。[pnpm 11 起已移除 `pnpm link --global`](https://pnpm.io/cli/link)，因此安装项目依赖用 pnpm，全局注册用 npm。
 
-**这意味着克隆下来的仓库文件夹必须留在原地**，如果你把它挪走或删掉，全局的 `k3img` 命令就会失效。如果你想要一个完全独立、不依赖仓库位置的可执行文件，需要额外的构建打包步骤，这份文档不涉及。
+## Windows (PowerShell)
 
-## 配置步骤
+在 PowerShell 中运行：
+
+```powershell
+Set-Location 'C:\path\to\image-uploader'
+pnpm install
+npm link
+```
+
+打开一个新的 PowerShell 窗口，验证命令：
+
+```powershell
+Get-Command k3img
+k3img --help
+```
+
+`Get-Command` 应显示全局命令的路径，`--help` 应显示上传参数。若 PowerShell 提示禁止运行 `.ps1`，可将上面的命令分别写成 `pnpm.cmd`、`npm.cmd` 和 `k3img.cmd`。
+
+## macOS
+
+在终端中运行：
 
 ```bash
-git clone <this-repo-url>
-cd image-uploader
+cd /path/to/image-uploader
 pnpm install
 chmod +x bin/k3img.mjs
-pnpm link --global
+npm link
 ```
 
-`chmod +x` 只在 macOS/Linux 上需要，Windows 可以跳过这一步。
-
-### 确认全局 bin 目录在 PATH 里
+打开一个新终端，验证命令：
 
 ```bash
-pnpm config get global-bin-dir
+command -v k3img
+k3img --help
 ```
 
-如果这个目录不在你的终端 `PATH` 里，执行：
+`command -v` 应输出全局命令的路径，`--help` 应显示上传参数。
 
-```bash
-pnpm setup
-```
+## 上传图片
 
-然后重启终端（或者 `source` 一下你的 shell 配置文件，比如 `~/.zshrc`、`~/.bashrc`），让改动生效。
+以下命令在 macOS 和 Windows 中相同。相对文件路径以运行 `k3img` 时所在的目录为起点。
 
-### 验证
-
-```bash
-which k3img   # 应该指向你克隆的仓库里的 bin/k3img.mjs
-```
-
-## 用法
-
-```bash
-k3img -f avatar.png              # 上传单个文件
-k3img -d ./images                # 扫描目录，交互式选择要上传的文件
+```text
+k3img -f avatar.png
+k3img -d ./images
 k3img -f avatar.png --concurrency 5
 k3img -f avatar.png -o records.json
 ```
 
-`k3img --help` 可以看到完整的参数列表。
+`-f` 上传单个文件；`-d` 扫描目录并让你选择图片。`-o` 指定上传记录的 JSON 文件；上传成功后会询问是否保存。运行 `k3img --help` 可查看完整参数。
+
+目录模式会列出找到的图片，默认全部选中。用方向键移动、空格键切换选择、`a` 全选或清空、`i` 反选、回车键确认；按 `Ctrl+C` 可取消操作。上传进度和结果会在同一套终端界面中显示，图片链接保留完整内容，便于复制。
+
+上传命令需要交互式终端；即使使用 `--cache` 跳过登录凭证保存位置的选择，成功上传后仍会询问是否保存记录。
 
 ## 登录凭证
 
-第一次运行 `k3img`（或者缓存的凭证已经过期时），会在终端弹出二维码，用 B 站 APP 扫码登录。
+首次上传或缓存过期时，终端会显示二维码，使用 B 站 APP 扫码登录。登录成功后，CLI 会询问凭证保存位置：
 
-扫码成功后，会询问凭证缓存到哪里：
+| 位置         | 路径                                   | 适用范围     |
+| ------------ | -------------------------------------- | ------------ |
+| 本地（默认） | 当前目录的 `.k3img/credentials.json`   | 当前工作目录 |
+| 全局         | 用户主目录的 `.k3img/credentials.json` | 任意工作目录 |
 
-| 位置         | 路径                        | 说明                               |
-| ------------ | --------------------------- | ---------------------------------- |
-| 本地（默认） | `./.k3img/credentials.json` | 只对你运行命令时所在的那个目录生效 |
-| 全局         | `~/.k3img/credentials.json` | 在任意目录下都能读到               |
+读取时先检查当前目录的缓存；本地缓存不存在或过期时，再检查全局缓存。缓存有效期为 7 天。`--cache local` 或 `--cache global` 可以跳过**新登录后的保存位置**选择，但不会改变读取顺序。
 
-读取缓存时，**本地优先，本地没有再找全局**——当前目录下如果有本地缓存，会优先使用。
-
-凭证有效期是 **7 天**，和服务端登录 Cookie 的有效期保持一致。
-
-### 跳过选择框
-
-传 `--cache local` 或 `--cache global` 可以跳过交互式选择（方便脚本化场景）：
-
-```bash
+```text
 k3img -f avatar.png --cache global
 ```
 
-## 卸载
+## 维护与排错
 
-```bash
-pnpm unlink --global
-```
+**移除全局命令：**运行 `npm uninstall -g image-uploader`。这不会删除仓库文件夹或登录凭证。
 
-## 常见问题
+**找不到 `k3img`：**先在仓库中重新运行 `npm link`，再打开新终端。仍找不到时，运行 `npm prefix -g` 查看 npm 全局目录，并确认其命令目录在 `PATH` 中：macOS 为该目录下的 `bin`，Windows 为该目录本身。
 
-**提示 `k3img: command not found`** —— 说明全局 bin 目录没加进 `PATH`，执行 `pnpm setup` 后重启终端。
-
-**命令能跑但立刻报错** —— 确认仓库里已经执行过 `pnpm install`，并且自从 `pnpm link --global` 之后，仓库文件夹没有被挪动或删除过。
+**命令启动失败：**确认在仓库中执行过 `pnpm install`。全局命令指向当前仓库；移动或删除仓库后，请在新位置重新运行 `npm link`。

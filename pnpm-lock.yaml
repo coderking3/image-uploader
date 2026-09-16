@@ -18,18 +18,15 @@ importers:
         specifier: ^3.4.2
         version: 3.4.2
     devDependencies:
-      '@inquirer/prompts':
-        specifier: ^8.5.2
-        version: 8.5.2(@types/node@26.4.1)
+      '@clack/prompts':
+        specifier: ^1.7.0
+        version: 1.7.0
       '@king3/eslint-config':
         specifier: ^7.1.1
         version: 7.1.1(@typescript-eslint/typescript-estree@8.66.0(typescript@6.0.3))(@typescript-eslint/utils@8.66.0(eslint@10.6.0)(typescript@6.0.3))(@vue/compiler-sfc@3.5.41)(eslint@10.6.0)(prettier@3.9.4)(ts-declaration-location@1.0.7(typescript@6.0.3))(typescript@6.0.3)
       '@king3/prettier-config':
         specifier: ^2.1.1
         version: 2.1.1(prettier@3.9.4)
-      '@types/cli-progress':
-        specifier: ^3.11.6
-        version: 3.11.6
       '@types/node':
         specifier: latest
         version: 26.4.1
@@ -39,9 +36,6 @@ importers:
       citty:
         specifier: ^0.2.2
         version: 0.2.2
-      cli-progress:
-        specifier: ^3.12.0
-        version: 3.12.0
       eslint:
         specifier: ^10.6.0
         version: 10.6.0

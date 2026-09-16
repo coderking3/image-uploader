@@ -2,9 +2,12 @@
   "name": "image-uploader",
   "type": "module",
   "imports": {
-    "#/*": "./server/*"
+    "#/*": "./server/*",
+    "#server/*": "./server/*.ts"
   },
-  "bin": "bin/k3img.mjs",
+  "bin": {
+    "k3img": "bin/k3img.mjs"
+  },
   "scripts": {
     "dev": "nitro dev --port 3080",
     "build": "nitro build",
@@ -20,14 +23,12 @@
     "consola": "^3.4.2"
   },
   "devDependencies": {
-    "@inquirer/prompts": "^8.5.2",
+    "@clack/prompts": "^1.7.0",
     "@king3/eslint-config": "^7.1.1",
     "@king3/prettier-config": "^2.1.1",
-    "@types/cli-progress": "^3.11.6",
     "@types/node": "latest",
     "@types/qrcode-terminal": "^0.12.2",
     "citty": "^0.2.2",
-    "cli-progress": "^3.12.0",
     "eslint": "^10.6.0",
     "fast-glob": "^3.3.3",
     "image-size": "^2.0.2",

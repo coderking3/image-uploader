@@ -1,7 +1,7 @@
 import type { Buffer } from 'node:buffer'
 
-import { API } from '#/constants'
-import { request } from '#/utils/http'
+import { API } from '../constants.ts'
+import { request } from './http/index.ts'
 
 export interface UploadCredentials {
   SESSDATA: string

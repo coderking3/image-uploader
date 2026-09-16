@@ -1,9 +1,10 @@
 import type { CredentialScope } from './credentials'
 
-import { select } from '@inquirer/prompts'
-import qrcodeTerminal from 'qrcode-terminal'
+import process from 'node:process'
 
-import { generateQrcode, pollQrcode } from '#/utils/qrcode'
+import { generateQrcode, pollQrcode } from '#server/utils/qrcode'
+import { cancel, isCancel, log, select } from '@clack/prompts'
+import qrcodeTerminal from 'qrcode-terminal'
 
 import { readCredentials, saveCredentials } from './credentials'
 
@@ -29,7 +30,7 @@ async function loginWithQrcode(): Promise<LoginCredentials> {
   const { data } = await generateQrcode()
   const { url, qrcode_key } = data
 
-  console.log('请使用 B 站 APP 扫描下方二维码登录：\n')
+  log.step('请使用 B 站 APP 扫描二维码')
   await renderQrcode(url)
 
   const startedAt = Date.now()
@@ -50,7 +51,7 @@ async function loginWithQrcode(): Promise<LoginCredentials> {
         if (result.status !== lastStatus) {
           lastStatus = result.status
           if (result.status === 'scanned') {
-            console.log('已扫描，请在手机上确认登录')
+            log.info('已扫描，请在手机上确认登录')
           }
         }
 
@@ -68,7 +69,7 @@ async function loginWithQrcode(): Promise<LoginCredentials> {
             return
           }
 
-          console.log('扫码登录成功')
+          log.success('扫码登录成功')
           resolve(result.credentials)
         }
 
@@ -92,24 +93,33 @@ export async function ensureLogin(
   const cached = readCredentials()
 
   if (cached) {
-    console.log('已读取本地缓存的登录凭证，跳过扫码')
+    log.info('已使用缓存的登录凭证')
     return cached
   }
 
   const credentials = await loginWithQrcode()
 
-  const scope =
+  const selectedScope =
     cacheOption ??
     (await select<CredentialScope>({
-      message: '登录凭证缓存到哪里？',
-      default: 'local',
-      choices: [
-        { name: '当前目录 (./.k3img/)', value: 'local' },
-        { name: '全局 (~/.k3img/)', value: 'global' }
-      ]
+      message: '登录凭证保存位置',
+      initialValue: 'local',
+      options: [
+        { label: '当前目录', hint: './.k3img/', value: 'local' },
+        { label: '全局', hint: '~/.k3img/', value: 'global' }
+      ],
+      showInstructions: false
     }))
 
-  saveCredentials(credentials, scope)
+  if (isCancel(selectedScope)) {
+    cancel('已取消保存登录凭证')
+    process.exit(0)
+  }
+
+  saveCredentials(credentials, selectedScope)
+  log.success(
+    `已保存登录凭证 · ${selectedScope === 'local' ? '当前目录' : '全局'}`
+  )
 
   return credentials
 }
